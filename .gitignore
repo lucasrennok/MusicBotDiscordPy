@@ -1,0 +1,11 @@
+# Env vars
+.env
+
+# FFMPEG version
+/ffmpeg*
+
+# Cache
+*pycache*
+
+# Remote host config
+squarecloud.app
