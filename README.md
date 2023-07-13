@@ -41,3 +41,9 @@ After that you will be able to run the application and wake up your bot.
 _Run the following command:_ py -3 main.py --verbose
 
 OBS.: If you receive package errors you will need just to install them with pip and try to run it again, if youtube-dl is the problem so you have to unninstall it and install again this package: https://github.com/ytdl-org/youtube-dl/archive/refs/heads/master.zip
+
+## In discord
+
+To add the bot to your server, just remember your CLIENT ID, once you got it when created your Application, and change the link below with it, after that, just click in it.
+
+https://discord.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=8
