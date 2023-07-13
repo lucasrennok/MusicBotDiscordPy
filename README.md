@@ -22,6 +22,7 @@ OBS.: Swipe all the Privileged Gateway Intents, that's important, so your bot ca
 You will find an example at .env.example, but it is also filled like this:
 
 DISCORD_TOKEN = YOUR TOKEN HERE
+
 BOT_ID = YOUR Application ID HERE
 
 ### Pip install
