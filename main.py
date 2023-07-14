@@ -1,7 +1,6 @@
 import random
-from discord.ext import commands,tasks
+from discord.ext import commands
 import discord
-from discord import app_commands
 import logging
 import os
 import asyncio
@@ -12,12 +11,6 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 bot = commands.Bot(command_prefix="!!",intents=discord.Intents.all(),application_id=int(os.getenv("BOT_ID")))
-
-class SubButton(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.value = None
-        self.timeout=600
 
 @bot.event
 async def on_ready(): 
@@ -30,7 +23,7 @@ async def sync(ctx,guild=None):
         await bot.tree.sync()
     else:
         await bot.tree.sync(guild=discord.Object(id=int(guild)))
-    await ctx.send("**Sincronizado!**",view=SubButton())
+    await ctx.send("**Comandos sincronizados no servidor!**\n\nDigite +help para ter uma guia dos comandos.")
 
 async def main():
     async with bot:
@@ -38,7 +31,6 @@ async def main():
             if filename.endswith('.py'):
                 await bot.load_extension(f'cogs.{filename[:-3]}')
 
-        
         TOKEN = os.getenv("DISCORD_TOKEN")
         await bot.start(TOKEN)
 
