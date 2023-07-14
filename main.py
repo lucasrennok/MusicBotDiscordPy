@@ -1,4 +1,3 @@
-import random
 from discord.ext import commands
 import discord
 import logging
@@ -10,7 +9,7 @@ load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 
-bot = commands.Bot(command_prefix="!!",intents=discord.Intents.all(),application_id=int(os.getenv("BOT_ID")))
+bot = commands.Bot(command_prefix="/",intents=discord.Intents.all(),application_id=int(os.getenv("BOT_ID")))
 
 @bot.event
 async def on_ready(): 
@@ -23,7 +22,7 @@ async def sync(ctx,guild=None):
         await bot.tree.sync()
     else:
         await bot.tree.sync(guild=discord.Object(id=int(guild)))
-    await ctx.send("**Comandos sincronizados no servidor!**\n\nDigite +help para ter uma guia dos comandos.")
+    await ctx.send("**Comandos sincronizados no servidor!**\n\nDigite /help para ter uma guia dos comandos.")
 
 async def main():
     async with bot:

@@ -69,7 +69,7 @@ class music(commands.Cog):
     @app_commands.command(name="help",description="Mostra um guia de comandos do bot.")
     async def help(self,interaction:discord.Interaction):
         await interaction.response.defer(thinking=True)
-        helptxt = f"`{self.prefix}help` - Guia de comandos do bot!\n`{self.prefix}play ou {self.prefix}p` - Toca música ou coloca na fila\n`{self.prefix}queue` - Veja a fila de músicas que foram adicionadas para tocar\n`{self.prefix}skip` - Pule a música que está tocando para a próxima da fila\n\n`!!sync` - Sincronizar comandos do bot com o servidor"
+        helptxt = f"`{self.prefix}help` - Guia de comandos do bot!\n`{self.prefix}play ou {self.prefix}p` - Toca música ou coloca na fila\n`{self.prefix}queue` - Veja a fila de músicas que foram adicionadas para tocar\n`{self.prefix}skip` - Pule a música que está tocando para a próxima da fila\n\nComando para o dono do server:\n`/sync` - Sincronizar comandos do bot com o servidor"
         embedhelp = discord.Embed(
             colour = 1646116,#grey
             title=f'Comandos do {self.client.user.name}',
