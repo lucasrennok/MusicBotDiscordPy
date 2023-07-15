@@ -9,7 +9,7 @@ load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 
-bot = commands.Bot(command_prefix="/",intents=discord.Intents.all(),application_id=int(os.getenv("BOT_ID")))
+bot = commands.Bot(command_prefix="!!",intents=discord.Intents.all(),application_id=int(os.getenv("BOT_ID")))
 
 @bot.event
 async def on_ready(): 

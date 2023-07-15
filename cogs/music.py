@@ -69,7 +69,7 @@ class music(commands.Cog):
     @app_commands.command(name="help",description="Mostra um guia de comandos do bot.")
     async def help(self,interaction:discord.Interaction):
         await interaction.response.defer(thinking=True)
-        helptxt = f"`{self.prefix}help` - Guia de comandos do bot!\n`{self.prefix}play ou {self.prefix}p` - Toca música ou coloca na fila\n`{self.prefix}queue` - Veja a fila de músicas que foram adicionadas para tocar\n`{self.prefix}skip` - Pule a música que está tocando para a próxima da fila\n\nComando para o dono do server:\n`/sync` - Sincronizar comandos do bot com o servidor"
+        helptxt = f"`{self.prefix}help` - Guia de comandos do bot!\n`{self.prefix}play ou {self.prefix}p` - Toca música ou coloca na fila\n`{self.prefix}queue` - Veja a fila de músicas que foram adicionadas para tocar\n`{self.prefix}skip` - Pule a música que está tocando para a próxima da fila\n`{self.prefix}pause` - Pausa a música e retoma música pausada\n`{self.prefix}resume` - Retoma música pausada\n`{self.prefix}stop` - Limpa fila e tira bot do canal de voz\n`{self.prefix}clear` - Limpa fila\n\n_Comando para o dono do server:_\n`!!sync` - Sincronizar comandos do bot com o servidor"
         embedhelp = discord.Embed(
             colour = 1646116,#grey
             title=f'Comandos do {self.client.user.name}',
@@ -119,6 +119,92 @@ class music(commands.Cog):
                 
                 if self.is_playing == False:
                     await self.play_music()
+
+    @app_commands.command(name="pause", description="Pausa uma música tocando")
+    async def pause(self, interaction:discord.Interaction):
+        await interaction.response.defer(thinking=True)
+        if self.is_playing == False:
+            embedvc = discord.Embed(
+                colour= 12255232,#red
+                description = 'Nenhuma música está tocando no momento!'
+            )
+            await interaction.followup.send(embed=embedvc)
+        else:
+            if self.vc.is_paused():
+                self.vc.resume()
+                embedvc = discord.Embed(
+                    colour= 1646116,#grey
+                    description = 'Música retomada!'
+                )
+                await interaction.followup.send(embed=embedvc)
+            else:
+                self.vc.pause()
+                embedvc = discord.Embed(
+                    colour= 1646116,#grey
+                    description = 'Música pausada.'
+                )
+                await interaction.followup.send(embed=embedvc)
+
+    @app_commands.command(name="stop", description="Limpa fila e tira o bot do canal")
+    async def stop(self, interaction:discord.Interaction):
+        await interaction.response.defer(thinking=True)
+        if self.vc != '' and (self.vc.is_playing() or self.vc.is_paused()):
+            self.music_queue = []
+            self.vc.stop()
+            await self.vc.disconnect()
+            embedvc = discord.Embed(
+                colour= 1646116,#grey
+                description = 'Música parada e bot desconectado do canal de voz.'
+            )
+            await interaction.followup.send(embed=embedvc)
+        else:
+            self.music_queue = []
+            embedvc = discord.Embed(
+                colour= 1646116,#grey
+                description = 'O bot não está em nenhum canal de voz para parar a música.'
+            )
+            await interaction.followup.send(embed=embedvc)
+
+    @app_commands.command(name="clear", description="Limpa fila")
+    async def clear(self, interaction:discord.Interaction):
+        await interaction.response.defer(thinking=True)
+        if len(self.music_queue) > 0:
+            self.music_queue = []
+            embedvc = discord.Embed(
+                colour= 1646116,#grey
+                description = 'Fila de músicas limpada!'
+            )
+            await interaction.followup.send(embed=embedvc)
+        else:
+            embedvc = discord.Embed(
+                colour= 1646116,#grey
+                description = 'Fila já está vazia.'
+            )
+            await interaction.followup.send(embed=embedvc)
+
+    @app_commands.command(name="resume", description="Retoma música pausada")
+    async def resume(self, interaction:discord.Interaction):
+        await interaction.response.defer(thinking=True)
+        if self.is_playing == False:
+            embedvc = discord.Embed(
+                colour= 12255232,#red
+                description = 'Nenhuma música está tocando no momento!'
+            )
+            await interaction.followup.send(embed=embedvc)
+        else:
+            if self.vc.is_paused():
+                self.vc.resume()
+                embedvc = discord.Embed(
+                    colour= 1646116,#grey
+                    description = 'Música retomada!'
+                )
+                await interaction.followup.send(embed=embedvc)
+            else:
+                embedvc = discord.Embed(
+                    colour= 1646116,#grey
+                    description = 'Nenhuma música pausada.'
+                )
+                await interaction.followup.send(embed=embedvc)
 
     @app_commands.command(name="p",description="Toca uma música")
     @app_commands.describe(
