@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import random
+import pickle
 
 from youtube_dl import YoutubeDL
 
@@ -13,6 +14,8 @@ class music(commands.Cog):
         self.is_playing = False
         self.loop = False
         self.song_now_playing = []
+
+        self.voice_channel_save_error = ''
 
         # 2d array containing [song, channel]
         self.music_queue = []
@@ -110,6 +113,7 @@ class music(commands.Cog):
         
         try:
             voice_channel = interaction.user.voice.channel
+            self.voice_channel_save_error = voice_channel
         except:
         #if voice_channel is None:
             #you need to be connected so that the bot knows where to go
@@ -185,7 +189,9 @@ class music(commands.Cog):
     @app_commands.command(name="save_queue", description="Salvar fila em playlist para loop ou usar depois")
     async def save_queue(self, interaction:discord.Interaction):
         await interaction.response.defer(thinking=True)
-        self.music_queue_save = self.music_queue
+        self.music_queue_save = self.music_queue[:]   
+        self.music_queue_save.insert(len(self.music_queue_save), self.song_now_playing)
+        
         embedvc = discord.Embed(
             colour= 1646116,#grey
             description = 'Fila salva em playlist'
@@ -195,7 +201,7 @@ class music(commands.Cog):
     @app_commands.command(name="use_queue", description="Usar playlist salva de música")
     async def use_queue(self, interaction:discord.Interaction):
         await interaction.response.defer(thinking=True)
-        self.music_queue = self.music_queue_save
+        self.music_queue = self.music_queue_save[:]
         embedvc = discord.Embed(
             colour= 1646116,#grey
             description = 'Playlist copiada para a fila'
@@ -288,6 +294,7 @@ class music(commands.Cog):
         await interaction.response.defer(thinking=True)
         self.loop = False
         self.music_queue_loop = []
+        self.voice_channel_save_error = ''
         if self.vc != '' and (self.vc.is_playing() or self.vc.is_paused()):
             self.music_queue = []
             self.vc.stop()
@@ -356,6 +363,7 @@ class music(commands.Cog):
         
         try:
             voice_channel = interaction.user.voice.channel
+            self.voice_channel_save_error = voice_channel
         except:
         #if voice_channel is None:
             #you need to be connected so that the bot knows where to go
@@ -427,11 +435,13 @@ class music(commands.Cog):
                     colour= 1646116, #grey
                     description = "O bot não tem mais músicas na fila"
                 )
+                self.voice_channel_save_error = ''
 
             await interaction.followup.send(embed=embedvc)
             self.vc.stop()
 
         else:
+            self.voice_channel_save_error = ''
             embedvc = discord.Embed(
                 colour= 1646116, #grey
                 description = "O bot não está tocando nenhuma música para que consiga pular"
@@ -463,6 +473,18 @@ class music(commands.Cog):
             )
             await interaction.followup.send(embed=embedvc)     
         else:
+            if self.vc != "" and self.vc:
+                self.vc.stop()
+                await self.vc.disconnect()
+
+                self.music_queue_loop.insert(0, self.song_now_playing)
+
+                await self.play_music()
+                embedvc = discord.Embed(
+                    colour= 1646116,#grey
+                    description = 'Houve algum erro com a música, voltando com ela ao canal de voz...'
+                )
+                await interaction.followup.send(embed=embedvc)
             raise error
 
 async def setup(client):
